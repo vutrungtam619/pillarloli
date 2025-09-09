@@ -78,7 +78,7 @@ def main(args):
             batched_gt_bboxes = data_dict['batched_gt_bboxes']
             batched_labels = data_dict['batched_labels']
             batched_images = data_dict['batched_images']
-            batched_calibs = data_dict['batched_calib_info']
+            batched_calibs = data_dict['batched_calib']
             batched_image_shape = data_dict['batched_image_shape']
 
             # Forward (FP32 normal)
@@ -167,7 +167,7 @@ def main(args):
                 batched_gt_bboxes = data_dict['batched_gt_bboxes']
                 batched_labels = data_dict['batched_labels']
                 batched_images = data_dict['batched_images']
-                batched_calibs = data_dict['batched_calib_info']
+                batched_calibs = data_dict['batched_calib']
                 batched_image_shape = data_dict['batched_image_shape']
 
                 # Forward (FP32 normal)
