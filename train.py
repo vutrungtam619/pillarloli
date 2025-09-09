@@ -39,7 +39,7 @@ def main(args):
     
     max_iters = len(train_dataloader) * args.epoch    
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.init_lr, betas=(0.9, 0.999), weight_decay=0.02)
-    scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=args.init_lr*2, total_steps=max_iters, pct_start=0.3, anneal_strategy='cos', cycle_momentum=True, base_momentum=0.85, max_momentum=0.95, div_factor=20)    
+    scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=args.init_lr, total_steps=max_iters, pct_start=0.3, anneal_strategy='cos', cycle_momentum=True, base_momentum=0.85, max_momentum=0.95, div_factor=20)    
     
     start_epoch = 0
     
