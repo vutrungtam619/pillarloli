@@ -1,7 +1,6 @@
-import pdb
 import numpy as np
 import torch
-from pointpillars.utils import limit_period, iou2d_nearest
+from utils import limit_period, iou2d_nearest
 
 
 class Anchors():
