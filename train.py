@@ -18,6 +18,8 @@ def save_summary(writer, loss_dict, global_step, tag, lr=None, momentum=None):
         
 def main(args):
     setup_seed()
+    os.makedirs(args.checkpoint_dir, exist_ok=True)
+    os.makedirs(args.log_dir, exist_ok=True)
     
     print("Loading dataset!..............................................")
     train_dataset = Kitti(data_root=args.data_root, split='train')
@@ -57,7 +59,6 @@ def main(args):
     else:
         print("No checkpoint found! Starting training from scratch!")     
     
-    os.makedirs(args.log_dir, exist_ok=True)
     writer = SummaryWriter(args.log_dir)
 
     for epoch in range(start_epoch, args.epoch):
