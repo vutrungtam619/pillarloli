@@ -6,7 +6,7 @@ from utils import bbox3d2corners, points_lidar2image, project_point_to_camera, p
 
 if __name__ == '__main__':
     # load sample
-    start_id = 18
+    start_id = 1
     
     train, val = Kitti(config['data_root'],'train'), Kitti(config['data_root'],'val')
     dataset = train if start_id in train.sorted_ids else val

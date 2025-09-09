@@ -151,20 +151,6 @@ def anchor_target(batched_anchors, batched_gt_bboxes, batched_gt_labels, assigne
             assigner['pos_iou_thr'], assigner['neg_iou_thr'], assigner['min_iou_thr']
             cur_anchors = anchors[:, :, j, :, :].reshape(-1, 7)
             overlaps = iou2d_nearest(gt_bboxes, cur_anchors) 
-            if overlaps.numel() == 0:
-                # Trường hợp không có ground truth nào
-                num_anchors = anchors.shape[0]
-                device = anchors.device
-
-                return {
-                    "bbox_targets": torch.zeros((num_anchors, 7), device=device),
-                    "bbox_weights": torch.zeros((num_anchors,), device=device),
-                    "labels": torch.zeros((num_anchors,), dtype=torch.long, device=device),
-                    "dir_labels": torch.zeros((num_anchors,), dtype=torch.long, device=device),
-                }
-
-            # Nếu có ground truth thì xử lý như bình thường
-            max_overlaps, max_overlaps_idx = torch.max(overlaps, dim=0)
             max_overlaps, max_overlaps_idx = torch.max(overlaps, dim=0)
             gt_max_overlaps, _ = torch.max(overlaps, dim=1)
 
