@@ -43,7 +43,7 @@ def judge_difficulty(annotation_dict):
     return np.array(difficultys, dtype=np.int32)
 
 def remove_dontcare(annos_info):
-    keep_ids = [i for i, name in enumerate(annos_info['name']) if name not in ['DontCare', 'Misc', 'Truck', 'Tram', 'Person_sitting']]
+    keep_ids = [i for i, name in enumerate(annos_info['name']) if name not in ['DontCare', 'Misc', 'Truck', 'Tram', 'Van', 'Person_sitting']]
     for k, v in annos_info.items():
         annos_info[k] = v[keep_ids]
     return annos_info
