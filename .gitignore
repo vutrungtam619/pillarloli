@@ -1,0 +1,10 @@
+__pycache__
+.vscode/
+packages/*.pyd
+datasets/lidar_reduced
+build/*
+images/*
+result/*
+logs/*
+kitti/*
+*.egg

@@ -1,0 +1,11 @@
+setup.py
+packages/iou3d/iou3d.cpp
+packages/iou3d/iou3d_kernel.cu
+packages/voxelization/voxelization.cpp
+packages/voxelization/voxelization_cpu.cpp
+packages/voxelization/voxelization_cuda.cu
+pillarpainting_ops.egg-info/PKG-INFO
+pillarpainting_ops.egg-info/SOURCES.txt
+pillarpainting_ops.egg-info/dependency_links.txt
+pillarpainting_ops.egg-info/not-zip-safe
+pillarpainting_ops.egg-info/top_level.txt
