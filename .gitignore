@@ -7,4 +7,4 @@ images/*
 result/*
 logs/*
 kitti/*
-*.egg-info
+*.egg-info/
