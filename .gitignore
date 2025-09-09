@@ -2,6 +2,7 @@ __pycache__
 .vscode/
 packages/*.pyd
 datasets/lidar_reduced
+datasets/*.pkl
 build/*
 images/*
 result/*
