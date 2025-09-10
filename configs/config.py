@@ -21,7 +21,7 @@ config = {
     'batch_size_train': 8,
     'batch_size_val': 4,
     'num_workers': 4,
-    'init_lr': 0.00033,
+    'init_lr': 0.00025,
     'epoch': 40,
     'ckpt_freq': 2,
     'log_freq': 25,
