@@ -49,21 +49,27 @@ def collate_fn(list_data):
 
     return rt_data_dict
 
-def get_dataloader(dataset, batch_size, num_workers, drop_last=False, oversample=1):
+def get_train_dataloader(dataset, batch_size, num_workers, drop_last=False, oversample=1):
     all_labels = [name for i in dataset.sorted_ids for name in dataset.data_infos[i]['annos']['name']]
     unique, counts = np.unique(all_labels, return_counts=True)
     freq = dict(zip(unique, counts))
-
     weights = [np.mean([1.0 / freq[name] for name in dataset.data_infos[i]['annos']['name']]) for i in dataset.sorted_ids]
 
     sampler = WeightedRandomSampler(weights, num_samples=oversample * len(weights), replacement=True)
 
-    return DataLoader(
+    return DataLoader(dataset, batch_size=batch_size, sampler=sampler,
+                      num_workers=num_workers, drop_last=drop_last, collate_fn=collate_fn)
+
+
+def get_val_dataloader(dataset, batch_size, num_workers, shuffle=False, drop_last=False):
+    collate = collate_fn
+    dataloader = DataLoader(
         dataset=dataset,
         batch_size=batch_size,
-        sampler=sampler,
+        shuffle=shuffle,
         num_workers=num_workers,
-        drop_last=drop_last,
-        collate_fn=collate_fn,
+        drop_last=drop_last, 
+        collate_fn=collate,
     )
+    return dataloader
 

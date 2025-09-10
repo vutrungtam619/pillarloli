@@ -5,7 +5,10 @@ import os
 from configs.config import config
 
 COLORS = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0]]
-COLORS_IMG = [[0, 0, 255], [0, 255, 0], [255, 0, 0], [0, 255, 255]]
+COLORS_IMG = [[255, 0, 0],   # Red
+              [0, 255, 0],   # Green
+              [0, 0, 255],   # Blue
+              [255, 255, 0]] # Yellow
 
 LINES = [
         [0, 1],
@@ -113,7 +116,7 @@ def vis_img_3d(img, gt_image_points=None, gt_labels=None, pred_image_points=None
             cls_id = int(gt_labels[i])
             cls_name = class_map.get(cls_id, str(cls_id))
             x_min, y_min = np.min(bbox_points[:,0]), np.min(bbox_points[:,1])  # top-left corner
-            cv2.putText(img, cls_name, (int(x_min), int(y_min)-5), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
+            cv2.putText(img, cls_name, (int(x_min), int(y_min)-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv2.LINE_AA)
 
     # ---- Prediction ----
     if pred_image_points is not None and pred_labels is not None:

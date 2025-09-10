@@ -4,7 +4,7 @@ import torch
 from tqdm import tqdm
 from configs.config import config
 from utils import setup_seed, Loss
-from datasets import Kitti, get_dataloader
+from datasets import Kitti, get_train_dataloader, get_val_dataloader
 from models import Pointpillars
 from torch.utils.tensorboard import SummaryWriter
 
@@ -25,8 +25,8 @@ def main(args):
     train_dataset = Kitti(data_root=args.data_root, split='train')
     val_dataset = Kitti(data_root=args.data_root, split='val')
     
-    train_dataloader = get_dataloader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers)
-    val_dataloader = get_dataloader(val_dataset, batch_size=args.batch_size, num_workers=args.num_workers)    
+    train_dataloader = get_train_dataloader(train_dataset, batch_size=args.batch_size, num_workers=args.num_workers)
+    val_dataloader = get_val_dataloader(val_dataset, batch_size=args.batch_size, num_workers=args.num_workers)    
     print("Loading dataset succesfully!..................................")   
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  
