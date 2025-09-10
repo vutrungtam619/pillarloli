@@ -6,7 +6,7 @@ datasets/lidar_reduced
 datasets/*.pkl
 build/*
 images/*
-result/*
+results/*
 logs/*
 kitti/*
 *.egg-info/
