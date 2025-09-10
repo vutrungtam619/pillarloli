@@ -623,9 +623,9 @@ class Pointpillars(nn.Module):
         ]
 
         # val and test
-        self.nms_pre = 100
+        self.nms_pre = 500
         self.nms_thr = 0.1
-        self.score_thr = 0.5
+        self.score_thr = 0.3
         self.max_num = 30
         
     def get_predicted_bboxes_single(self, bbox_cls_pred, bbox_pred, bbox_dir_cls_pred, anchors):

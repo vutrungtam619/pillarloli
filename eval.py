@@ -40,8 +40,6 @@ def do_eval(det_results, gt_results, CLASSES, saved_path):
     gt_results: dict(id -> det_results)
     CLASSES: dict
     '''
-    print(len(det_results))
-    print(len(gt_results))
     assert len(det_results) == len(gt_results)
     f = open(os.path.join(saved_path, 'eval_results.txt'), 'w')
 
@@ -59,14 +57,8 @@ def do_eval(det_results, gt_results, CLASSES, saved_path):
         # 1.1, 2d bboxes iou
         gt_bboxes2d = gt_result['bbox'].astype(np.float32)
         det_bboxes2d = det_result['bbox'].astype(np.float32)
-        if gt_bboxes2d.shape[0] == 0 or det_bboxes2d.shape[0] == 0:
-            ious['bbox_2d'].append(
-                np.zeros((gt_bboxes2d.shape[0], det_bboxes2d.shape[0]), dtype=np.float32)
-            )
-        else:
-            iou2d_v = iou2d(torch.from_numpy(gt_bboxes2d).cuda(),
-                            torch.from_numpy(det_bboxes2d).cuda())
-            ious['bbox_2d'].append(iou2d_v.cpu().numpy())
+        iou2d_v = iou2d(torch.from_numpy(gt_bboxes2d).cuda(), torch.from_numpy(det_bboxes2d).cuda())
+        ious['bbox_2d'].append(iou2d_v.cpu().numpy())
 
         # 1.2, bev iou
         gt_location = gt_result['location'].astype(np.float32)
@@ -76,34 +68,16 @@ def do_eval(det_results, gt_results, CLASSES, saved_path):
         det_dimensions = det_result['dimension'].astype(np.float32)
         det_rotation_y = det_result['rotation_y'].astype(np.float32)
 
-        gt_bev = np.concatenate([gt_location[:, [0, 2]], gt_dimensions[:, [0, 2]], gt_rotation_y[:, None]], axis=-1) \
-                 if gt_location.shape[0] > 0 else np.zeros((0, 5), dtype=np.float32)
-        det_bev = np.concatenate([det_location[:, [0, 2]], det_dimensions[:, [0, 2]], det_rotation_y[:, None]], axis=-1) \
-                  if det_location.shape[0] > 0 else np.zeros((0, 5), dtype=np.float32)
-
-        if gt_bev.shape[0] == 0 or det_bev.shape[0] == 0:
-            ious['bbox_bev'].append(
-                np.zeros((gt_bev.shape[0], det_bev.shape[0]), dtype=np.float32)
-            )
-        else:
-            iou_bev_v = iou_bev(torch.from_numpy(gt_bev).cuda(),
-                                torch.from_numpy(det_bev).cuda())
-            ious['bbox_bev'].append(iou_bev_v.cpu().numpy())
+        gt_bev = np.concatenate([gt_location[:, [0, 2]], gt_dimensions[:, [0, 2]], gt_rotation_y[:, None]], axis=-1)
+        det_bev = np.concatenate([det_location[:, [0, 2]], det_dimensions[:, [0, 2]], det_rotation_y[:, None]], axis=-1)
+        iou_bev_v = iou_bev(torch.from_numpy(gt_bev).cuda(), torch.from_numpy(det_bev).cuda())
+        ious['bbox_bev'].append(iou_bev_v.cpu().numpy())
 
         # 1.3, 3dbboxes iou
-        gt_bboxes3d = np.concatenate([gt_location, gt_dimensions, gt_rotation_y[:, None]], axis=-1) \
-                      if gt_location.shape[0] > 0 else np.zeros((0, 7), dtype=np.float32)
-        det_bboxes3d = np.concatenate([det_location, det_dimensions, det_rotation_y[:, None]], axis=-1) \
-                       if det_location.shape[0] > 0 else np.zeros((0, 7), dtype=np.float32)
-
-        if gt_bboxes3d.shape[0] == 0 or det_bboxes3d.shape[0] == 0:
-            ious['bbox_3d'].append(
-                np.zeros((gt_bboxes3d.shape[0], det_bboxes3d.shape[0]), dtype=np.float32)
-            )
-        else:
-            iou3d_v = iou3d_camera(torch.from_numpy(gt_bboxes3d).cuda(),
-                                   torch.from_numpy(det_bboxes3d).cuda())
-            ious['bbox_3d'].append(iou3d_v.cpu().numpy())
+        gt_bboxes3d = np.concatenate([gt_location, gt_dimensions, gt_rotation_y[:, None]], axis=-1)
+        det_bboxes3d = np.concatenate([det_location, det_dimensions, det_rotation_y[:, None]], axis=-1)
+        iou3d_v = iou3d_camera(torch.from_numpy(gt_bboxes3d).cuda(), torch.from_numpy(det_bboxes3d).cuda())
+        ious['bbox_3d'].append(iou3d_v.cpu().numpy())
 
     MIN_IOUS = {
         'Pedestrian': [0.5, 0.5, 0.5],
@@ -350,7 +324,7 @@ def main(args):
 
                 batch_results = model(
                     batched_pts=batched_pts,
-                    mode='val',
+                    mode='test',
                     batched_gt_bboxes=batched_gt_bboxes,
                     batched_gt_labels=batched_labels,
                     batched_images=batched_images,
@@ -396,7 +370,7 @@ def main(args):
                         format_result['rotation_y'].append(camera_bbox[6])
                         format_result['score'].append(score)
 
-                    write_label(format_result, os.path.join(saved_submit_path, f'{idx:06d}.txt'))
+                    write_label(os.path.join(saved_submit_path, f'{idx:06d}.txt'), format_result)
                     format_results[idx] = {
                         'name': np.array(format_result['name']),
                         'truncated': np.array(format_result['truncated'], dtype=np.float32).reshape(-1),
@@ -421,7 +395,7 @@ if __name__ == '__main__':
     parser.add_argument('--saved_path', default='results')
     parser.add_argument('--batch_size', default=config['batch_size_val'])
     parser.add_argument('--num_workers', default=config['num_workers'])
-    parser.add_argument('--nclasses', default=config['nclasses'])
+    parser.add_argument('--nclasses', default=config['num_classes'])
 
     args = parser.parse_args()
 

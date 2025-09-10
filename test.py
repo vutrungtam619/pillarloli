@@ -112,6 +112,6 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--ckpt', default='checkpoints/epoch_40.pth')
-    parser.add_argument('--start_idx', type=int, default=1)
+    parser.add_argument('--start_idx', type=int, default=4168)
     args = parser.parse_args()
     main(args)

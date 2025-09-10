@@ -19,7 +19,7 @@ config = {
     'checkpoint_dir': os.path.join(root, 'checkpoints'),
     'log_dir': os.path.join(root, 'logs'),
     'batch_size_train': 8,
-    'batch_size_val': 2,
+    'batch_size_val': 4,
     'num_workers': 4,
     'init_lr': 0.00033,
     'epoch': 40,

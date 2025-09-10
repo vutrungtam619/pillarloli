@@ -1,6 +1,7 @@
 __pycache__
 .vscode/
 packages/*.pyd
+checkpoints/*.pth
 datasets/lidar_reduced
 datasets/*.pkl
 build/*
