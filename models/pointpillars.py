@@ -438,6 +438,26 @@ class LidarDownsampling(nn.Module):
             outs.append(C0)
         return outs
 
+class GateFusionBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.gate_conv = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, bias=False),
+            nn.Sigmoid()
+        )
+        self.out_conv = nn.Sequential(
+            nn.Conv2d(out_channels, out_channels, kernel_size=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True)
+        )
+
+    def forward(self, C, R):
+        feat = torch.cat([C, R], dim=1)      # (B, Cc+Cr, H, W)
+        alpha = self.gate_conv(feat)         # (B, Co, H, W), giá trị ∈ [0,1]
+        fused = C * alpha + R * (1 - alpha)
+        return self.out_conv(fused)
+
+
 class Backbone(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
@@ -445,33 +465,24 @@ class Backbone(nn.Module):
         self.fusion_blocks = nn.ModuleList()
         for i in range(len(in_channels)):
             self.fusion_blocks.append(
-                nn.Sequential(
-                    nn.Conv2d(in_channels[i], out_channels[i], kernel_size=1, bias=False),
-                    nn.BatchNorm2d(out_channels[i]),
-                    nn.ReLU(inplace=True)
-                )
+                GateFusionBlock(in_channels[i], out_channels[i])
             )
-            
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-        
+
     def forward(self, C_blocks, R_blocks):
         """ Fusion two blocks on each stage
         Args:
-            C_blocks [list torch.tensor, [(B, 64, 248, 216), (B, 128, 124, 108), (B, 256, 62, 54)]]: lidar blocks
-            R_blocks [list torch.tensor, [(B, 64, 248, 216), (B, 128, 124, 108), (B, 256, 62, 54)]]: image blocks
+            C_blocks: [(B, 64, 248, 216), (B, 128, 124, 108), (B, 256, 62, 54)]
+            R_blocks: [(B, 64, 248, 216), (B, 128, 124, 108), (B, 256, 62, 54)]
 
         Returns:
-            CR_blocks [list torch.tensor, [(B, 64, 248, 216), (B, 128, 124, 108), (B, 256, 62, 54)]]: fusion blocks
+            CR_blocks: fused blocks
         """
         CR_blocks = []
         for i, fusion in enumerate(self.fusion_blocks):
-            C, R = C_blocks[i], R_blocks[i]
-            CR = torch.cat([C, R], dim=1)  # concat
-            CR = fusion(CR)               # conv1x1
+            CR = fusion(C_blocks[i], R_blocks[i])
             CR_blocks.append(CR)
         return CR_blocks
+
     
 class Neck(nn.Module):
     def __init__(self, in_channels, upsample_strides, out_channels):

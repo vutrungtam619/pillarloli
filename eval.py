@@ -275,6 +275,7 @@ def do_eval(det_results, gt_results, CLASSES, saved_path):
         print(f'{k} AP: {v[0]:.4f} {v[1]:.4f} {v[2]:.4f}')
         print(f'{k} AP: {v[0]:.4f} {v[1]:.4f} {v[2]:.4f}', file=f)
     f.close()
+
     
 
 def main(args):
